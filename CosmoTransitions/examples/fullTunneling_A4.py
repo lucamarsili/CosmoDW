@@ -172,14 +172,14 @@ def makePlots():
     # Thin-walled instanton
 #    plt.figure()
 #    ax = plt.subplot(221)
-    m = Potential(mu2=1 , g1=1., g2=-1, A = -1)
-    u = 1/np.sqrt(3-2)
-    beta = -1
-    Arep = -1
-    a  = (2 * Arep)/np.sqrt((3 + (2 * beta)))
+    m = Potential(mu2=1 , g1=1., g2=-0.1, A = -0.0001)
+    u = 1/np.sqrt(3-0.2)
+    beta = -0.1
+    Arep = -0.0001
+    a  = ( Arep)/(2*np.sqrt((3 + (2 * beta))))
     am = (np.sqrt(1+ a **2) -a)
     ap = (np.sqrt(1+ a **2) +a)
-    field_values = u*np.array([[-ap, ap, ap],[am,am, am ]])
+    field_values = u*np.array([[am, am, am],[-ap,ap,ap],[-am,-am, am ]])
 
 #    m.plotContour()
     Y = pd.fullTunneling(field_values, m.V, m.dV)
@@ -203,9 +203,9 @@ def makePlots():
 
 def makeScan_BP():
     output = []
-    Arep = -0.01
+    Arep = -0.0001
    
-    beta = -0.001
+    beta = -0.01
     a  = (2 * Arep)/np.sqrt((3 + (2 * beta)))
     am = (np.sqrt(1+ a **2) -a)
     ap = (np.sqrt(1+ a **2) +a)
