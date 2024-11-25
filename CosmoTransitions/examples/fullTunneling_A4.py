@@ -206,7 +206,7 @@ def makeScan_BP():
     Arep = -0.0001
    
     beta = -0.01
-    a  = (2 * Arep)/np.sqrt((3 + (2 * beta)))
+    a  = (Arep)/(2*np.sqrt((3 + (2 * beta))))
     am = (np.sqrt(1+ a **2) -a)
     ap = (np.sqrt(1+ a **2) +a)
     field_values = np.array([[am,am, am],[-ap, ap, ap ],[-am, -am, am]]) #(0.47)
@@ -225,33 +225,41 @@ def makeScan_plot():
     output = []
     bb = []
     tt = []
-    Arep = -1
-    for i in range(-40,0): 
-        beta = -10**(i/10)
+    aa = []
+    for i in range(-40,-10): 
+        for j in range(-50, -20): 
+            beta = -10**(i/10)
+            Arep = -10**(j/10)
+            print(Arep)
+            a  = (Arep)/(2*np.sqrt((3 + (2 * beta))))
+            am = (np.sqrt(1+ a **2) -a)
+            ap = (np.sqrt(1+ a **2) +a)
+            field_values = np.array([[am,am, am],[-ap,ap,ap],[-am, -am, am]]) #(0.47)
+            #field_values = np.array([[am,am, am],[-am, -am, am]]) #(0.64)
+            field_val = (1/np.sqrt(3+2* beta))*field_values
+            Model = Potential(mu2= 1,g1= 1,g2= beta, A = Arep)
+            sol = pd.fullTunneling(field_val, Model.V, Model.dV) 
+            out = np.asarray([Arep, beta,Model.GetTension(sol.profile1D.R, sol.Phi, beta)*(3+2* beta), Model.FindDelta(sol.profile1D.R, sol.Phi, beta)]) 
+            aa.append(-Arep)
+            bb.append(-beta)
+            tt.append(Model.GetTension(sol.profile1D.R, sol.Phi, beta)*(3+2* beta))
+            output.append(out)
+    np.savetxt("Scan_T3_A_beta_tension_new_full.txt",output)
+    '''    
+    [X, Y] = np.meshgrid(aa, bb) 
+  
+    fig, ax = plt.subplots(1, 1) 
+  
     
-        a = (2 * Arep)/(3 + (2 * beta))
-        am = (np.sqrt(1+ a **2) -a)
-        ap = (np.sqrt(1+ a **2) +a)
-        field_values = np.array([[ap,ap, ap],[-ap, ap, -ap]])
-        field_val = (1/np.sqrt(3+2* beta))*field_values
-        Model = Potential(mu2= 1,g1= 1,g2= beta, A = Arep)
-        sol = pd.fullTunneling(field_val, Model.V, Model.dV) 
-        out = np.asarray([beta,Model.GetTension(sol.profile1D.R, sol.Phi, beta)*(3+2* beta), Model.FindDelta(sol.profile1D.R, sol.Phi, beta)]) 
-        bb.append(-beta)
-        tt.append(Model.GetTension(sol.profile1D.R, sol.Phi, beta)*(3+2* beta))
-        output.append(out)
-        
-    x_values = bb
-    y_values = tt
-    plt.plot(x_values, y_values)
-    plt.xlabel('beta')
-    plt.xscale('log')
-    plt.ylabel('sigma')
+  
+    # plots filled contour plot 
+    ax.contourf(X, Y, tt)     
+   
     plt.show()
-    
+    '''
     return output 
 
 
 if __name__ == "__main__":
-    makePlots()
+    makeScan_plot()
     
